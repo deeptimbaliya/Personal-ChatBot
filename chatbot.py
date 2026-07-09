@@ -34,10 +34,12 @@ while True:
 
     msg=prompt.invoke({"input":user_input,"history":history})
 
-    result=llm.invoke(msg)
-
-    print(result.content)
+    # result=llm.invoke(msg)
+    respons=""
+    for chunk in llm.stream(msg):
+        print(chunk.content, end="", flush=True)
+        respons+=chunk.content
 
 
     history.append(HumanMessage(content=user_input))
-    history.append(AIMessage(content=result.content))
+    history.append(AIMessage(content=respons))
