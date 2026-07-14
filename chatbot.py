@@ -21,10 +21,9 @@ store["history"] = []
 
 while True:
 
-    user_input=input("Write your Massage:\n")
+    user_input=input("user:")
 
-    if user_input.lower() in ["exit","bye",]:
-        break
+    
     prompt= ChatPromptTemplate([
         ("system","you are a personal Assistant and helpful chatbot."),
         MessagesPlaceholder(variable_name="history"),
@@ -34,12 +33,16 @@ while True:
 
     msg=prompt.invoke({"input":user_input,"history":history})
 
-    # result=llm.invoke(msg)
+    print("AI: ",end="",flush=True)
     respons=""
     for chunk in llm.stream(msg):
         print(chunk.content, end="", flush=True)
         respons+=chunk.content
 
+
+    print("\n")
+    if user_input.lower() in ["exit","bye",]:
+        break
 
     history.append(HumanMessage(content=user_input))
     history.append(AIMessage(content=respons))
