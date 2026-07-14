@@ -2,47 +2,28 @@ from dotenv import load_dotenv
 load_dotenv()
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import HumanMessage,AIMessage
-import os
-import getpass
 
-store={}
-
-llm=ChatGroq(
-    model="openai/gpt-oss-20b",
-    temperature=0.9,
-    max_tokens=None,
-    reasoning_format="parsed",
-    max_retries=2,
-    timeout=None
-)
-
-store["history"] = []
-
-while True:
-
-    user_input=input("user:")
-
-    
-    prompt= ChatPromptTemplate([
-        ("system","you are a personal Assistant and helpful chatbot."),
-        MessagesPlaceholder(variable_name="history"),
-        ("user","{input}")
-    ])
-    history = store["history"] 
-
-    msg=prompt.invoke({"input":user_input,"history":history})
-
-    print("AI: ",end="",flush=True)
-    respons=""
-    for chunk in llm.stream(msg):
-        print(chunk.content, end="", flush=True)
-        respons+=chunk.content
+class Groq():
+    def __init__(self):
+        self.model=ChatGroq(
+            model="openai/gpt-oss-20b",
+            temperature=0.9,
+            max_tokens=None,
+            reasoning_format="parsed",
+            max_retries=2,
+            timeout=None
+        )
+        self.prompt= ChatPromptTemplate([
+            ("system","you are a personal Assistant and helpful chatbot."),
+            MessagesPlaceholder(variable_name="history"),
+            ("user","{input}")
+        ])
 
 
-    print("\n")
-    if user_input.lower() in ["exit","bye",]:
-        break
+    def Create_prompt(self,user_input, history) :
+        return self.prompt.invoke({"input":user_input,"history":history})
 
-    history.append(HumanMessage(content=user_input))
-    history.append(AIMessage(content=respons))
+        
+
+
+
